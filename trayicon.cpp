@@ -39,31 +39,50 @@ TrayIcon::~TrayIcon()
 {
     delete action_about;
     action_about = nullptr;
-    delete action_search;
-    action_search = nullptr;
+    delete action_search_shortcut;
+    action_search_shortcut = nullptr;
+    delete action_search_tray;
+    action_search_tray = nullptr;
     delete action_help;
     action_help = nullptr;
     qc = nullptr;
 }
 
+void TrayIcon::search(const QString &word)
+{
+    qDebug() << word;
+    QByteArray data = data_option.arg(word).toUtf8();
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::UserAgentHeader,
+                  QVariant("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"));
+    qnam.post(req, data);
+
+}
+
 void TrayIcon::set_actions()
 {
-    action_about  = new QAction(i18n("&About..."), this);
-    action_help   = new QAction(i18n("&Help"), this);
-    action_search = new QAction(i18n("&Search"), this);
+    action_about           = new QAction(i18n("&About..."), this);
+    action_help            = new QAction(i18n("&Help"), this);
+    action_search_shortcut = new QAction(i18n("Search"), this);
+    action_search_tray     = new QAction(i18n("&Search"), this);
     action_about->setObjectName("dictool-about");
     action_help->setObjectName("dictool-help");
-    action_search->setObjectName("dictool-search");
+    action_search_shortcut->setObjectName("dictool-search");
+    action_search_tray->setObjectName("dictool-search-tray");
     connect(action_about, &QAction::triggered, this, &TrayIcon::on_about);
-    connect(action_search, &QAction::triggered, this, &TrayIcon::on_search);
+    connect(action_search_shortcut, &QAction::triggered, this, &TrayIcon::on_search_by_shortcut);
+    connect(action_search_tray, &QAction::triggered, this, &TrayIcon::on_search_by_tray);
 }
 
 void TrayIcon::set_trayicon()
 {
     QIcon icon("icon.png");
     setIconByPixmap(icon);
+    contextMenu()->addAction(action_search_tray);
+    contextMenu()->addSeparator();
+    contextMenu()->addAction(action_help);
     contextMenu()->addAction(action_about);
-    KGlobalAccel::self()->setGlobalShortcut(action_search, QKeySequence("Meta+F11"));
+    KGlobalAccel::self()->setGlobalShortcut(action_search_shortcut, QKeySequence("Meta+F11"));
 }
 
 void TrayIcon::on_about()
@@ -102,16 +121,20 @@ void TrayIcon::on_reply(QNetworkReply *reply)
     }
 }
 
-void TrayIcon::on_search()
+void TrayIcon::on_search_by_shortcut()
 {
-    qDebug() << "Search triggered";
+    qDebug() << "Search triggered.";
     QString word = qc->text(QClipboard::Selection);
     if(word != "") {
-        qDebug() << word;
-        QByteArray data = data_option.arg(word).toUtf8();
-        QNetworkRequest req(url);
-        req.setHeader(QNetworkRequest::UserAgentHeader,
-                      QVariant("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"));
-        qnam.post(req, data);
+        search(word);
+    }
+}
+
+void TrayIcon::on_search_by_tray()
+{
+    qDebug() << "Search triggered.";
+    QString word = qc->text(QClipboard::Clipboard);
+    if(word != "") {
+        search(word);
     }
 }

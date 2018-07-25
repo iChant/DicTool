@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 {
     DicTool app(argc, argv);
     KLocalizedString::setApplicationDomain("dictool");
-    KAboutData about_data("dictool", i18n("DicTool"), "0.1.0",
+    KAboutData about_data("dictool", i18n("DicTool"), "0.2.0",
                           i18n("A simple dictionary tool"),
                           KAboutLicense::LGPL_V2_1,
                           i18n("(c) 2018 , Chant Shao"), QString(),

@@ -55,12 +55,13 @@ private:
 
     QAction* action_about;
     QAction* action_help;
-    QAction* action_search;
+    QAction* action_search_shortcut;
+    QAction* action_search_tray;
 
     QClipboard* qc;
-
     QNetworkAccessManager qnam;
 
+    void search(const QString &word);
     void set_actions();
     void set_trayicon();
 
@@ -68,7 +69,8 @@ private slots:
     void on_about();
     void on_help();
     void on_reply(QNetworkReply *reply);
-    void on_search();
+    void on_search_by_shortcut();
+    void on_search_by_tray();
 };
 
 #endif // TRAYICON_H
