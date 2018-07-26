@@ -70,6 +70,7 @@ void TrayIcon::set_actions()
     action_search_shortcut->setObjectName("dictool-search");
     action_search_tray->setObjectName("dictool-search-tray");
     connect(action_about, &QAction::triggered, this, &TrayIcon::on_about);
+    connect(action_help, &QAction::triggered, this, &TrayIcon::on_help);
     connect(action_search_shortcut, &QAction::triggered, this, &TrayIcon::on_search_by_shortcut);
     connect(action_search_tray, &QAction::triggered, this, &TrayIcon::on_search_by_tray);
 }
